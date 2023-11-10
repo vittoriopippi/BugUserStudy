@@ -1,0 +1,5 @@
+venv
+.vscode
+images
+user_study/media
+*.pyc

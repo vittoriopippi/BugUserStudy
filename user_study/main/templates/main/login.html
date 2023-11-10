@@ -1,0 +1,42 @@
+{% extends "main/base.html" %}
+
+{% block body %}
+  <section class="vh-100 gradient-custom">
+    <div class="container py-2 h-100">
+      <div class="row d-flex justify-content-center align-items-center h-100">
+        <div class="col-12 col-md-8 col-lg-6 col-xl-4">
+          <div class="card bg-dark text-white" style="border-radius: 1rem;">
+            <div class="card-body p-5 text-center">
+              <div class="mb-md-0 mt-md-0 pb-0">
+                <h2 class="fw-bold mb-2 text-uppercase">BuG User Study</h2>
+                <p class="text-white-50 mb-5">Tempo medio sondaggio {{ avg_time }}</p>
+
+                <form class="form-outline form-white mb-0" method="post">
+                  {% csrf_token %}
+                  <input name="username" id="username" class="form-control form-control-lg mb-3" placeholder="Canny Il Guerriero" />
+                  <p class="mb-0 mb-5">
+                    Hai già partecipato? <a href="{% url 'scoreboard' %}" class="text-white-50 fw-bold">Visualizza la classifica</a>
+                  </p>
+                  <button class="btn btn-light btn-lg px-5 w-100" type="submit">Inizia</button>
+                </form>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+{% endblock %}
+
+{% block script %}
+  <script>
+      $(document).ready(function () {
+        $("button").click(function () {
+          var username = $("#username").val()
+          if (username != "") {
+            window.location.href = "/playing/" + username
+          }
+        }
+      })
+    </script>
+{% endblock %}
