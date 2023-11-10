@@ -84,7 +84,7 @@ def post_answer(request):
 @staff_member_required
 def import_images(request):
     SampleImage.objects.all().delete()
-    root = Path(r'D:\Work\Projects\DiffUserStudy\images')
+    root = Path('/home/vpippi/BugUserStudy/images')
     for img_path in root.rglob('*.png'):
         img_path = Path(img_path)
         competitor_name = img_path.parent.parent.name
