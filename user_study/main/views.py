@@ -21,6 +21,8 @@ def login(request):
     times = []
     for player in Player.objects.all():
         answers = Answer.objects.all().filter(player=player).order_by('date')
+        if answers.count() == 0:
+            continue
         time_elps = answers.last().date - answers.first().date
         times.append(time_elps.total_seconds())
     avg_time = sum(times) / len(times) if len(times) > 0 else 'N/A'
@@ -85,7 +87,7 @@ def post_answer(request):
 def import_images(request):
     SampleImage.objects.all().delete()
     root = Path('/home/vpippi/BugUserStudy/images')
-    for img_path in root.rglob('*.png'):
+    for img_path in root.rglob('*'):
         img_path = Path(img_path)
         competitor_name = img_path.parent.parent.name
         prompt_text = img_path.parent.name.replace('_', ' ')
