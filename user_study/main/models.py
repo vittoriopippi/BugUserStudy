@@ -19,7 +19,7 @@ class Prompt(models.Model):
     
 def content_file_name(instance, filename):
     filename = Path(filename)
-    prompt = instance.prompt.text.replace(' ', '_')
+    prompt = instance.prompt.eng_text.replace(' ', '_')
     rand_id = '%06x' % random.randrange(16**6)
     return Path() / instance.competitor.name / prompt / f'{rand_id}{filename.suffix}'
 
