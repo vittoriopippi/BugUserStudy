@@ -26,7 +26,7 @@ SECRET_KEY = 'django-insecure-bx*vjw)i%a*ujll-1i@n%9)q*48@3ac@*o_7m%-p8uurw8md%l
 DEBUG = True
 
 ALLOWED_HOSTS = [
-    'localhost',
+    '127.0.0.1',
     'www.vpippi.com',
 ]
 

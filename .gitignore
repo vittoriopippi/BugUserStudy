@@ -6,3 +6,4 @@ user_study/media
 *.zip
 *.png
 *.jpg
+user_study/db.sqlite3

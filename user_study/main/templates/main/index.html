@@ -1,4 +1,4 @@
-{% extends "main/base.html" %}
+{% extends 'main/base.html' %}
 
 {% block body %}
   <section class="vh-100 gradient-custom">
@@ -23,8 +23,9 @@
 
                 <img src="{{ first_question.sample_a.img.url }}" alt="" id="img_a" style="width: 100%;" class="mb-3" />
                 <img src="{{ first_question.sample_b.img.url }}" alt="" id="img_b" style="width: 100%;" class="mb-3" />
-                <div class="progress" role="progressbar" aria-label="Basic example" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">
-                  <div class="progress-bar" style="width: 0%"></div>
+                <div class="progress position-relative" role="progressbar" aria-label="Basic example" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">
+                  <div id="progress_load" class="progress-bar position-absolute h-100" style="width: 40%;"></div>
+                  <div id="progress_survey" class="progress-bar position-absolute" style="width: 0%"></div>
                 </div>
               </div>
             </div>
@@ -43,9 +44,7 @@
         </div>
         <div class="modal-body text-start">
           <div>
-            <p>
-              Clicca sull'immagine che meglio ripecchia i seguenti aspetti:
-            </p>
+            <p>Clicca sull'immagine che meglio ripecchia i seguenti aspetti:</p>
             <ul>
               <li>Estetica</li>
               <li>Coerente</li>
@@ -54,9 +53,7 @@
           </div>
           <hr />
           <div class="text-white-50">
-            <p>
-              Click on the image that best reflects the following aspects:
-            </p>
+            <p>Click on the image that best reflects the following aspects:</p>
             <ul>
               <li>Aesthetics</li>
               <li>Consistent</li>
@@ -79,6 +76,7 @@
         myModalAlternative.show();
         const total_questions = {{ total_questions}};
         var answered_questions = {{ answered_questions }};
+        var loaded_images = 0;
         
         var index = 0;
         const img_pairs = [
@@ -110,10 +108,12 @@
             const img2 = new Image();
             
             img1.onload = function() {
+              loaded_images += 1;
               console.log("Loaded image " + pair[0]);
               // Image 1 loaded, preload Image 2
               img2.src = pair[1];
               img2.onload = function() {
+                      loaded_images += 1;
                       console.log("Loaded image " + pair[1]);
                       // Image 2 loaded, continue to the next pair
                       preloadSequentially(imagePairs, index + 1);
@@ -132,7 +132,6 @@
         preloadSequentially(img_pairs, 0);
         
         function next_question() {
-          update_progress()
           index += 1;
           if (index < img_pairs.length) {
             $('#img_a').attr('src', img_pairs[index][0]);
@@ -147,8 +146,15 @@
           if (progress > 100) {
             progress = 100;
           }
-          $('.progress-bar').css('width', progress + '%');
+          $('#progress_survey').css('width', progress + '%');
+          let load_progress = (loaded_images / (img_pairs.length * 2)) * 100;
+          if (load_progress > 100) {
+            load_progress = 100;
+          }
+          $('#progress_load').css('width', load_progress + '%');
+          window.requestAnimationFrame(update_progress);
         }
+        
         update_progress()
         
         function post_answer(answer) {
