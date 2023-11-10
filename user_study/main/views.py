@@ -14,6 +14,8 @@ from datetime import timedelta, datetime
 def login(request):
     if request.POST:
         entered_username = request.POST['username']
+        if entered_username is None or len(entered_username) == 0:
+            return redirect('login')
         player, _ = Player.objects.get_or_create(name=entered_username)
         request.session['player_id'] = player.pk
         return redirect('index')
