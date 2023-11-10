@@ -3,4 +3,6 @@ venv
 images
 user_study/media
 *.pyc
-images.zip
+*.zip
+*.png
+*.jpg
