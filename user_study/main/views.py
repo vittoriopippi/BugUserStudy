@@ -88,6 +88,8 @@ def import_images(request):
     SampleImage.objects.all().delete()
     root = Path('/home/vpippi/BugUserStudy/images')
     for img_path in root.rglob('*'):
+        if not img_path.is_file() and not img_path.suffix in ('.png', '.jpg'):
+            continue
         img_path = Path(img_path)
         competitor_name = img_path.parent.parent.name
         prompt_text = img_path.parent.name.replace('_', ' ')
