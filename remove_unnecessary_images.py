@@ -12,3 +12,4 @@ for subfolder in subfolders:
     random.shuffle(imgs)
     for img in tqdm(imgs[20:]):
         img.unlink()
+    
