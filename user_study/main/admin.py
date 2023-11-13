@@ -42,7 +42,8 @@ class AnswerAdmin(admin.ModelAdmin):
     list_display = ('date', 'player', 'winner', 'question')
 
 class PlayerAdmin(admin.ModelAdmin):
-    list_display = ('username', 'accuracy', 'answers_count', 'correct_control_answers', 'time_delta', 'finished')
+    list_display = ('username', 'accuracy', 'answers_count', 'correct_control_answers', 'time_delta', 'finished', 'visible')
+    list_filter = ('visible', 'accuracy')
 
     def answers_count(self, obj):
         return models.Answer.objects.filter(player=obj).count()

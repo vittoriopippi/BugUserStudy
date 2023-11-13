@@ -63,7 +63,7 @@ def index(request):
     return render(request, 'main/index.html', context)
 
 def scoreboard(request):
-    players = Player.objects.all().order_by('-accuracy')
+    players = Player.objects.all().filter(visible=True).order_by('-accuracy')
     context = {
         'players': players,
         }

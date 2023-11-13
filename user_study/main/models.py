@@ -45,6 +45,7 @@ class SampleImage(models.Model):
 class Player(models.Model):
     name = models.CharField(max_length=100)
     accuracy = models.IntegerField(default=0)
+    visible = models.BooleanField(default=True)
 
     def _accuracy(self):
         answers_count = Answer.objects.filter(player=self).filter(winner__competitor__winner=True, question__is_control=False).count()
