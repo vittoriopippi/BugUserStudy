@@ -29,7 +29,7 @@ def login(request):
             continue
         time_elps = answers.last().date - answers.first().date
         times.append(time_elps.total_seconds())
-    avg_time = sum(times) / len(times) if len(times) > 0 else 'N/A'
+    avg_time = sorted(times)[len(times) // 2] if len(times) > 0 else 'N/A'
     if avg_time != 'N/A':
         avg_time = str(timedelta(seconds=avg_time)).split('.')[0]
     return render(request, 'main/login.html', {'avg_time': avg_time})
@@ -37,6 +37,9 @@ def login(request):
 def index(request):
     player_id = request.session.get('player_id')
     if player_id is None or not Player.objects.filter(pk=player_id).exists():
+        # remove player id from the session
+        
+        request.session.get('player_id')
         return redirect('login')
 
     player = Player.objects.get(pk=player_id)
