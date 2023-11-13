@@ -49,12 +49,12 @@ def index(request):
     random.shuffle(other_questions)
     questions = control_questions + other_questions[:settings.QUESTIONS_PER_PLAYER - answered_questions]
 
-    first_question = questions.first()
+    first_question = questions[0]
     context = {
         'player': player,
         'first_question': first_question,
         'questions': questions,
-        'total_questions': control_questions.count() + settings.QUESTIONS_PER_PLAYER,
+        'total_questions': len(control_questions) + settings.QUESTIONS_PER_PLAYER,
         'answered_questions': answered_questions,
         }
     return render(request, 'main/index.html', context)
