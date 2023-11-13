@@ -53,5 +53,6 @@ admin.site.register(models.SampleImage, SampleImageAdmin)
 admin.site.register(models.Prompt, PromptAdmin)
 admin.site.register(models.Question, QuestionAdmin)
 admin.site.register(models.Answer, AnswerAdmin)
+admin.site.register(models.Player, PlayerAdmin)
 
 

@@ -36,6 +36,9 @@ class SampleImage(models.Model):
             pil_image = Image.open(img)
             width = pil_image.width
         return width
+    
+    def __str__(self):
+        return f'{self.competitor.name} - {self.prompt.eng_text}'
 
 class Player(models.Model):
     name = models.CharField(max_length=100)
@@ -50,6 +53,9 @@ class Player(models.Model):
 
     def username(self):
         return self.name.replace('_', ' ') + f'#{self.pk:03d}'
+    
+    def __str__(self):
+        return self.username()
 
 class Question(models.Model):
     sample_a = models.ForeignKey(SampleImage, on_delete=models.CASCADE, related_name='sample_a')
