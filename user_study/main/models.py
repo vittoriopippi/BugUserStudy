@@ -47,10 +47,7 @@ class Player(models.Model):
 
     def _accuracy(self):
         answers_count = Answer.objects.filter(player=self).filter(winner__competitor__winner=True, question__is_control=False).count()
-        questions_count = Question.objects.filter(is_control=False).count()
-        if questions_count == 0:
-            return 0
-        return answers_count / questions_count * 100
+        return answers_count
 
     def username(self):
         return self.name.replace('_', ' ') + f'#{self.pk:03d}'
