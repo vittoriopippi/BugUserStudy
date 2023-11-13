@@ -45,7 +45,9 @@ def index(request):
         return redirect('login')
 
     control_questions = Question.objects.all().filter(is_control=True).order_by('pk')
-    questions = control_questions | Question.objects.all().filter(is_control=False).order_by('?')[:settings.QUESTIONS_PER_PLAYER - answered_questions]
+    other_questions = Question.objects.all().filter(is_control=False)
+    random.shuffle(other_questions)
+    questions = control_questions | other_questions[:settings.QUESTIONS_PER_PLAYER - answered_questions]
 
     first_question = questions.first()
     context = {
