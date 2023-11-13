@@ -9,6 +9,7 @@ from itertools import combinations
 from pathlib import Path
 import random
 from datetime import timedelta, datetime
+from django.conf import settings
 
 
 def login(request):
@@ -37,24 +38,21 @@ def index(request):
     if player_id is None or not Player.objects.filter(pk=player_id).exists():
         return redirect('login')
 
-    player = Player.objects.get(pk=player_id)        
-    questions = Question.objects.all().filter(is_control=True).order_by('pk')
-    questions = questions | Question.objects.all().filter(is_control=False).order_by('?')
-    total_questions = questions.count()
-
-    # filter all the questions that the player has not already answered
-    for answer in Answer.objects.all().filter(player=player):
-        questions = questions.exclude(pk=answer.question.pk)
-    if questions.count() == 0:
+    player = Player.objects.get(pk=player_id)
+    answered_questions = Answer.objects.all().filter(player=player, question__is_control=False).count() 
+    if answered_questions >= settings.QUESTIONS_PER_PLAYER:
         return redirect('login')
+
+    control_questions = Question.objects.all().filter(is_control=True).order_by('pk')
+    questions = control_questions | Question.objects.all().filter(is_control=False).order_by('?')[:settings.QUESTIONS_PER_PLAYER - answered_questions]
 
     first_question = questions.first()
     context = {
         'player': player,
         'first_question': first_question,
         'questions': questions,
-        'total_questions': total_questions,
-        'answered_questions': total_questions - questions.count(),
+        'total_questions': control_questions.count() + settings.QUESTIONS_PER_PLAYER,
+        'answered_questions': answered_questions,
         }
     return render(request, 'main/index.html', context)
 
@@ -81,14 +79,16 @@ def post_answer(request):
         player.accuracy = player._accuracy()
         player.save()
 
-        remaining_questions = Question.objects.all().count() - Answer.objects.all().filter(player=player).count()
+        answered_questions = Answer.objects.all().filter(player=player, question__is_control=False).count() 
+        remaining_questions = settings.QUESTIONS_PER_PLAYER - answered_questions
         return JsonResponse({'status': 'OK', 'remaining_questions': remaining_questions})
     return HttpResponse('ERROR')
 
 @staff_member_required
 def import_images(request):
-    SampleImage.objects.all().delete()
-    root = Path('/home/vpippi/BugUserStudy/images')
+    Competitor.objects.all().delete()
+    # root = Path('/home/vpippi/BugUserStudy/images')
+    root = Path('images')
     for img_path in root.rglob('*'):
         if not img_path.is_file() and not img_path.suffix in ('.png', '.jpg'):
             continue
@@ -104,11 +104,11 @@ def import_images(request):
 @staff_member_required 
 def generate_questions(request):
     Question.objects.all().filter(is_control=False).delete()
-    competitors = Competitor.objects.all()
+    competitors = Competitor.objects.all().filter(available=True)
     prompts = Prompt.objects.all()
     for competitor_a, competitor_b in combinations(competitors, 2):
         for prompt in prompts:
-            for _ in range(3):
+            for _ in range(settings.QUESTIONS_PER_PAIR):
                 sample_a = SampleImage.objects.all().filter(competitor=competitor_a, prompt=prompt).order_by("?").first()
                 sample_b = SampleImage.objects.all().filter(competitor=competitor_b, prompt=prompt).order_by("?").first()
                 sample_a, sample_b = (sample_a, sample_b) if random.random() > 0.5 else (sample_b, sample_a)

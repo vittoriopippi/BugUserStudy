@@ -147,7 +147,7 @@
             progress = 100;
           }
           $('#progress_survey').css('width', progress + '%');
-          let load_progress = (loaded_images / (img_pairs.length * 2)) * 100;
+          let load_progress = (((answered_questions * 2) + loaded_images) / (total_questions * 2)) * 100;
           if (load_progress > 100) {
             load_progress = 100;
           }
