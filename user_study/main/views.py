@@ -137,6 +137,8 @@ def dump_answers(request):
     writer = csv.writer(response)
     writer.writerow(["player", "is_control", "img_a", "img_b", "competitor_a", "competitor_b", "prompt", "winner"])
     for answer in Answer.objects.all():
+        if not answer.player.visible:
+            continue
         writer.writerow([
             answer.player.name,
             answer.question.is_control,
