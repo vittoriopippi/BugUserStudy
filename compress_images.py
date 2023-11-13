@@ -3,8 +3,8 @@ from tqdm import tqdm
 from PIL import Image
 
 
-src = Path('images_png')
-dst = Path('images_jpg')
+src = Path(r'D:\Downloads\bugdiff')
+dst = Path(r'D:\Downloads\bugdiff_jpg')
 
 all_imgs = list(src.rglob('*.png'))
 for src_img in tqdm(all_imgs):
