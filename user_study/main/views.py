@@ -150,3 +150,10 @@ def dump_answers(request):
             answer.winner.competitor.name
         ])
     return response
+
+@staff_member_required
+def update_accuracy(request):
+    for player in Player.objects.all():
+        player.accuracy = player._accuracy()
+        player.save()
+    return redirect('scoreboard')
