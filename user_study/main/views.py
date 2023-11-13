@@ -1,5 +1,6 @@
 from django.shortcuts import render, redirect
 import csv
+import os
 from django.http import JsonResponse, HttpResponse
 from django.core.files import File
 from django.views.decorators.csrf import csrf_exempt
@@ -87,8 +88,12 @@ def post_answer(request):
 @staff_member_required
 def import_images(request):
     Competitor.objects.all().delete()
-    # root = Path('/home/vpippi/BugUserStudy/images')
-    root = Path('images')
+    # if linux server
+    if os.name == 'nt':
+        root = Path(r'D:\Work\Projects\BugUserStudy\images')
+    else:
+        root = Path('/home/vpippi/BugUserStudy/images')
+
     for img_path in root.rglob('*'):
         if not img_path.is_file() and not img_path.suffix in ('.png', '.jpg'):
             continue
