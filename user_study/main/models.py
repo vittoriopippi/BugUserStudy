@@ -29,6 +29,7 @@ class SampleImage(models.Model):
     competitor = models.ForeignKey(Competitor, on_delete=models.CASCADE)
     prompt = models.ForeignKey(Prompt, on_delete=models.CASCADE)
     img = models.ImageField(upload_to=content_file_name, max_length=1024)
+    exclude_from_study = models.BooleanField(default=False)
 
     @property
     def width(self):

@@ -116,8 +116,8 @@ def generate_questions(request):
     for competitor_a, competitor_b in combinations(competitors, 2):
         for prompt in prompts:
             for _ in range(settings.QUESTIONS_PER_PAIR):
-                sample_a = SampleImage.objects.all().filter(competitor=competitor_a, prompt=prompt).order_by("?").first()
-                sample_b = SampleImage.objects.all().filter(competitor=competitor_b, prompt=prompt).order_by("?").first()
+                sample_a = SampleImage.objects.all().filter(competitor=competitor_a, prompt=prompt, exclude_from_study=False).order_by("?").first()
+                sample_b = SampleImage.objects.all().filter(competitor=competitor_b, prompt=prompt, exclude_from_study=False).order_by("?").first()
                 sample_a, sample_b = (sample_a, sample_b) if random.random() > 0.5 else (sample_b, sample_a)
                 Question.objects.create(sample_a=sample_a, sample_b=sample_b, is_control=False)
     return HttpResponse(f'Generated {len(Question.objects.all())} questions')
