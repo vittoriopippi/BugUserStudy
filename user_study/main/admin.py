@@ -42,11 +42,15 @@ class AnswerAdmin(admin.ModelAdmin):
     list_display = ('date', 'player', 'winner', 'question')
 
 class PlayerAdmin(admin.ModelAdmin):
-    list_display = ('username', 'accuracy', 'answers_count')
+    list_display = ('username', 'accuracy', 'answers_count', 'correct_control_answers')
 
     def answers_count(self, obj):
         return models.Answer.objects.filter(player=obj).count()
     answers_count.short_description = 'Answers'
+
+    def correct_control_answers(self, obj):
+        return models.Answer.objects.filter(player=obj, question__is_control=True, winner__competitor__winner=True).count()
+    correct_control_answers.short_description = 'Correct control answers'
 
 
 admin.site.register(models.Competitor, CompetitorAdmin)
