@@ -13,8 +13,8 @@ class Competitor(models.Model):
         return self.name
 
 class Prompt(models.Model):
-    eng_text = models.CharField(max_length=100, unique=True)
-    ita_text = models.CharField(max_length=100, blank=True)
+    eng_text = models.CharField(max_length=128, unique=True)
+    ita_text = models.CharField(max_length=128, blank=True)
 
     def __str__(self):
         return self.eng_text
