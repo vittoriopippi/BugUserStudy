@@ -62,6 +62,9 @@ class Player(models.Model):
     def in_progress(self):
         return Answer.objects.all().filter(player=self, question__is_control=False).count() < settings.QUESTIONS_PER_PLAYER
     
+    def finished(self):
+        return not self.in_progress()
+    
     def __str__(self):
         return self.username()
 
