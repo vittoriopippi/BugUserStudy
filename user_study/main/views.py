@@ -37,9 +37,7 @@ def login(request):
 def index(request):
     player_id = request.session.get('player_id')
     if player_id is None or not Player.objects.filter(pk=player_id).exists():
-        # remove player id from the session
-        
-        request.session.get('player_id')
+        del request.session['player_id']
         return redirect('login')
 
     player = Player.objects.get(pk=player_id)
