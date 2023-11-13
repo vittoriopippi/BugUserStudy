@@ -23,7 +23,7 @@
                         <td>
                           {{ player.name }} <span class="muted">#{{ player.pk|stringformat:'03d' }}</span>
                         </td>
-                        <td>{{ player.accuracy|floatformat:2 }}</td>
+                        <td>{{ player.accuracy }}</td>
                       </tr>
                     {% endfor %}
                   </tbody>
