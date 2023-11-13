@@ -29,7 +29,8 @@ class CompetitorAdmin(admin.ModelAdmin):
     images_sizes.short_description = 'Sizes'
 
 class SampleImageAdmin(admin.ModelAdmin):
-    list_display = ('competitor', 'prompt', 'img')
+    list_display = ('competitor', 'prompt', 'img', 'exclude_from_study')
+    list_filter = ('competitor', 'prompt', 'exclude_from_study')
 
 class PromptAdmin(admin.ModelAdmin):
     list_display = ('eng_text', 'ita_text')
