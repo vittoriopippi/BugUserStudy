@@ -21,7 +21,10 @@
                       <tr>
                         <th scope="row">{{ forloop.counter }}</th>
                         <td>
-                          {{ player.name }} <span class="muted">#{{ player.pk|stringformat:'03d' }}</span>
+                          {{ player.name }} <span class="muted">#{{ player.pk|stringformat:'03d' }}</span> 
+                          {% if player.in_progress %}
+                            <span class="badge rounded-pill text-bg-warning">in corso</span>
+                          {% endif %}
                         </td>
                         <td>{{ player.accuracy }}</td>
                       </tr>

@@ -2,6 +2,7 @@ from django.db import models
 from pathlib import Path
 import random
 from PIL import Image
+from django.conf import settings
 
 
 class Competitor(models.Model):
@@ -57,6 +58,9 @@ class Player(models.Model):
         if answers.count() == 0:
             return None
         return answers.last().date - answers.first().date
+    
+    def in_progress(self):
+        return Answer.objects.all().filter(player=self, question__is_control=False).count() < settings.QUESTIONS_PER_PLAYER
     
     def __str__(self):
         return self.username()
