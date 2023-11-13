@@ -10,7 +10,7 @@ def disable_competitors(modeladmin, request, queryset):
     queryset.update(available=False)
 
 class CompetitorAdmin(admin.ModelAdmin):
-    list_display = ('name', 'winner', 'available', 'images_count')
+    list_display = ('name', 'winner', 'available', 'images_count', 'questions_count')
     list_filter = ('winner', 'available')
     actions = [enable_competitors, disable_competitors]
 
