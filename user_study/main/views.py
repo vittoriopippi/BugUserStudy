@@ -132,7 +132,7 @@ def dump_answers(request):
     )
 
     writer = csv.writer(response)
-    writer.writerow(["player", "is_control", "img_a", "img_b", "competitor_a", "competitor_b", "winner"])
+    writer.writerow(["player", "is_control", "img_a", "img_b", "competitor_a", "competitor_b", "prompt", "winner"])
     for answer in Answer.objects.all():
         writer.writerow([
             answer.player.name,
@@ -141,6 +141,7 @@ def dump_answers(request):
             answer.question.sample_b.img.url,
             answer.question.sample_a.competitor.name,
             answer.question.sample_b.competitor.name,
+            answer.question.sample_a.prompt.eng_text,
             answer.winner.competitor.name
         ])
     return response
