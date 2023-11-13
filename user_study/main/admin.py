@@ -1,9 +1,18 @@
 from django.contrib import admin
 from main import models
 
+@admin.action(description="Enable selected competitors")
+def enable_competitors(modeladmin, request, queryset):
+    queryset.update(available=True)
+
+@admin.action(description="Disable selected competitors")
+def disable_competitors(modeladmin, request, queryset):
+    queryset.update(available=False)
+
 class CompetitorAdmin(admin.ModelAdmin):
     list_display = ('name', 'winner', 'available', 'images_count')
     list_filter = ('winner', 'available')
+    actions = [enable_competitors, disable_competitors]
 
     def images_count(self, obj):
         return models.SampleImage.objects.filter(competitor=obj).count()
