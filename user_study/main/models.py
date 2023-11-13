@@ -52,6 +52,12 @@ class Player(models.Model):
     def username(self):
         return self.name.replace('_', ' ') + f'#{self.pk:03d}'
     
+    def time_delta(self):
+        answers = Answer.objects.all().filter(player=self).order_by('date')
+        if answers.count() == 0:
+            return None
+        return answers.last().date - answers.first().date
+    
     def __str__(self):
         return self.username()
 
