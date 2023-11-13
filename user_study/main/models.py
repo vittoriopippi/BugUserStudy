@@ -32,7 +32,7 @@ class SampleImage(models.Model):
 
     @property
     def width(self):
-        with self.image_field.open() as img:
+        with self.img.open() as img:
             pil_image = Image.open(img)
             width = pil_image.width
         return width
