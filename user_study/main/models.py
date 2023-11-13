@@ -43,7 +43,7 @@ class SampleImage(models.Model):
 
 class Player(models.Model):
     name = models.CharField(max_length=100)
-    accuracy = models.FloatField(default=0)
+    accuracy = models.IntegerField(default=0)
 
     def _accuracy(self):
         answers_count = Answer.objects.filter(player=self).filter(winner__competitor__winner=True, question__is_control=False).count()
