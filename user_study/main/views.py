@@ -44,11 +44,12 @@ def index(request):
     if answered_questions >= settings.QUESTIONS_PER_PLAYER:
         return redirect('login')
 
-    control_questions = list(Question.objects.all().filter(is_control=True).order_by('pk'))
+    control_questions = Question.objects.all().filter(is_control=True).order_by('pk')
     control_questions_answered = Answer.objects.all().filter(player=player, question__is_control=True)
     for question in control_questions_answered:
-        control_questions.remove(question.question)
-        
+        control_questions = control_questions.exclude(pk=question.question.pk)
+    control_questions = list(control_questions)
+
     other_questions = list(Question.objects.all().filter(is_control=False))
     random.shuffle(other_questions)
     questions = control_questions + other_questions[:settings.QUESTIONS_PER_PLAYER - answered_questions]
