@@ -24,7 +24,7 @@
                 <img src="{{ first_question.sample_a.img.url }}" alt="" id="img_a" style="width: 100%;" class="mb-3" />
                 <img src="{{ first_question.sample_b.img.url }}" alt="" id="img_b" style="width: 100%;" class="mb-3" />
                 <div class="progress position-relative" role="progressbar" aria-label="Basic example" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">
-                  <div id="progress_load" class="progress-bar position-absolute h-100" style="width: 40%;"></div>
+                  <div id="progress_load" class="progress-bar position-absolute h-100" style="width: 0%;"></div>
                   <div id="progress_survey" class="progress-bar position-absolute" style="width: 0%"></div>
                 </div>
               </div>
@@ -74,31 +74,47 @@
       $(document).ready(function () {
         const myModalAlternative = new bootstrap.Modal('#staticBackdrop');
         myModalAlternative.show();
+        const buffer_size = 10;
         const total_questions = {{ total_questions}};
+
         var answered_questions = {{ answered_questions }};
-        var loaded_images = 0;
+        var loaded_pairs = 0;
         
         var index = 0;
         const img_pairs = [
-        {% for question in questions %}
-        ["{{ question.sample_a.img.url }}","{{ question.sample_b.img.url }}"],
-        {% endfor %}
+          {% for question in questions %}
+          ["{{ question.sample_a.img.url }}","{{ question.sample_b.img.url }}"],
+          {% endfor %}
         ];
         const prompt_eng_texts = [
-        {% for question in questions %}
-        "{{ question.sample_a.prompt.eng_text|safe }}",
-        {% endfor %}
+          {% for question in questions %}
+          "{{ question.sample_a.prompt.eng_text|safe }}",
+          {% endfor %}
         ];
         const prompt_ita_texts = [
-        {% for question in questions %}
-        "{{ question.sample_a.prompt.ita_text|safe }}",
-        {% endfor %}
+          {% for question in questions %}
+          "{{ question.sample_a.prompt.ita_text|safe }}",
+          {% endfor %}
         ];
         const question_ids = [
-        {% for question in questions %}
-        "{{ question.id }}",
-        {% endfor %}
+          {% for question in questions %}
+          "{{ question.id }}",
+          {% endfor %}
         ];
+
+        function ensure_buffer_is_not_full(timeout){
+          var start = Date.now();
+          return new Promise(wait_for_buffer);
+
+          function wait_for_buffer(resolve, reject) {
+            if (loaded_pairs - index < buffer_size)
+                resolve(loaded_pairs - index);
+            else if (timeout && (Date.now() - start) >= timeout)
+                reject(new Error("timeout"));
+            else
+                setTimeout(wait_for_buffer.bind(this, resolve, reject), 30);
+        }
+        }
         
         // Function to preload images sequentially
         function preloadSequentially(imagePairs, index) {
@@ -108,15 +124,16 @@
             const img2 = new Image();
             
             img1.onload = function() {
-              loaded_images += 1;
               console.log("Loaded image " + pair[0]);
               // Image 1 loaded, preload Image 2
               img2.src = pair[1];
               img2.onload = function() {
-                      loaded_images += 1;
+                      loaded_pairs += 1;
                       console.log("Loaded image " + pair[1]);
                       // Image 2 loaded, continue to the next pair
-                      preloadSequentially(imagePairs, index + 1);
+                      ensure_buffer_is_not_full(100000).then(function(){
+                        preloadSequentially(imagePairs, index + 1);
+                      });
                     };
                   };
                   
@@ -127,6 +144,8 @@
                   console.log("All images preloaded");
                 }
         }
+
+        
         
         // Start preloading images
         preloadSequentially(img_pairs, 0);
@@ -141,21 +160,22 @@
           }
         }
 
-        function update_progress() {
+        function update() {
           let progress = ((answered_questions + index) / total_questions) * 100;
           if (progress > 100) {
             progress = 100;
           }
           $('#progress_survey').css('width', progress + '%');
-          let load_progress = (((answered_questions * 2) + loaded_images) / (total_questions * 2)) * 100;
+          let load_progress = ((answered_questions + loaded_pairs) / total_questions) * 100;
           if (load_progress > 100) {
             load_progress = 100;
           }
           $('#progress_load').css('width', load_progress + '%');
-          window.requestAnimationFrame(update_progress);
+
+          window.requestAnimationFrame(update);
         }
         
-        update_progress()
+        update()
         
         function post_answer(answer) {
           $.ajax({
@@ -167,6 +187,7 @@
               'player_id': '{{ player.pk }}',
             },
             success: function (data) {
+              console.log(data);
               if (data['remaining_questions'] == 0) {
                 window.location.href = '{% url "scoreboard" %}';
               }
