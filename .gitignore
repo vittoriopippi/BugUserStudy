@@ -7,4 +7,3 @@ user_study/media
 *.png
 *.jpg
 user_study/db.sqlite3
-*/*/migrations
