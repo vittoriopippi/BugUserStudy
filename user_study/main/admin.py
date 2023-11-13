@@ -18,6 +18,11 @@ class CompetitorAdmin(admin.ModelAdmin):
         return models.SampleImage.objects.filter(competitor=obj).count()
     images_count.short_description = 'Images'
 
+    def questions_count(self, obj):
+        a_count = models.Question.objects.filter(sample_a__competitor=obj).count()
+        b_count = models.Question.objects.filter(sample_b__competitor=obj).count()
+        return a_count + b_count
+
 class SampleImageAdmin(admin.ModelAdmin):
     list_display = ('competitor', 'prompt', 'img')
 
