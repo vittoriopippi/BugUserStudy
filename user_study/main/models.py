@@ -27,7 +27,7 @@ def content_file_name(instance, filename):
 class SampleImage(models.Model):
     competitor = models.ForeignKey(Competitor, on_delete=models.CASCADE)
     prompt = models.ForeignKey(Prompt, on_delete=models.CASCADE)
-    img = models.ImageField(upload_to=content_file_name)
+    img = models.ImageField(upload_to=content_file_name, max_length=1024)
 
 class Player(models.Model):
     name = models.CharField(max_length=100)
