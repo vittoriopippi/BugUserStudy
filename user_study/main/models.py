@@ -3,6 +3,7 @@ from pathlib import Path
 import random
 from PIL import Image
 from django.conf import settings
+from django.db.models import Q
 
 
 class Competitor(models.Model):
@@ -65,6 +66,11 @@ class Player(models.Model):
     
     def finished(self):
         return not self.in_progress()
+    
+    def max_score(self):
+        answers = Answer.objects.all().filter(player=self, question__is_control=False)
+        answers = answers.filter(Q(question__sample_a__competitor__winner=True) | Q(question__sample_b__competitor__winner=True))
+        return answers.count()
     
     def __str__(self):
         return self.username()
