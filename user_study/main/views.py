@@ -25,7 +25,7 @@ def login(request):
     times = []
     for player in Player.objects.all().filter(visible=True):
         time_elps = player.time_delta()
-        if time_elps is not None and player.finished():
+        if time_elps is not None and player.finished:
             times.append(time_elps.total_seconds())
     avg_time = sorted(times)[len(times) // 2] if len(times) > 0 else 'N/A'
     if avg_time != 'N/A':
