@@ -87,8 +87,8 @@ def post_answer(request):
         question = Question.objects.get(pk=request.POST['question_id'])
         winner = question.sample_a if request.POST['answer'] == 'img_a' else question.sample_b
         Answer.objects.create(player=player, winner=winner, question=question)
-        player.accuracy = player._accuracy()
-        player.save()
+        player.update_accuracy()
+        player.update_correct_control_answers()
 
         answered_questions = Answer.objects.all().filter(player=player, question__is_control=False).count() 
         remaining_questions = settings.QUESTIONS_PER_PLAYER - answered_questions
@@ -160,10 +160,10 @@ def dump_answers(request):
     return response
 
 @staff_member_required
-def update_accuracy(request):
+def update_players(request):
     for player in Player.objects.all():
-        player.accuracy = player._accuracy()
-        player.save()
+        player.update_accuracy()
+        player.update_correct_control_answers()
     return redirect('scoreboard')
 
 def stats(request):

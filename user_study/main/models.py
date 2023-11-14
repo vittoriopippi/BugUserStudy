@@ -61,10 +61,19 @@ class Player(models.Model):
     visible = models.BooleanField(default=True)
     created_at = models.DateTimeField(auto_now_add=True, null=True)
     finished = models.BooleanField(default=False)
+    correct_control_answers = models.IntegerField(default=0)
 
     def _accuracy(self):
         answers_count = Answer.objects.filter(player=self).filter(winner__competitor__winner=True, question__is_control=False).count()
         return answers_count
+    
+    def update_accuracy(self):
+        self.accuracy = self._accuracy()
+        self.save()
+
+    def update_correct_control_answers(self):
+        self.correct_control_answers = Answer.objects.filter(player=self, question__is_control=True, winner__competitor__winner=True).count()
+        self.save()
 
     def username(self):
         return self.name.replace('_', ' ') + f'#{self.pk:03d}'

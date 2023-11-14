@@ -64,16 +64,12 @@ class AnswerAdmin(admin.ModelAdmin):
 
 class PlayerAdmin(admin.ModelAdmin):
     list_display = ('username', 'accuracy', 'answers_count', 'correct_control_answers', 'time_delta', 'created_at', 'finished', 'visible', 'max_score')
-    list_filter = ('visible', 'accuracy', 'finished', 'created_at')
+    list_filter = ('visible', 'correct_control_answers', 'finished', 'created_at')
     actions = [invert_answers, set_finished, set_not_finished]
 
     def answers_count(self, obj):
         return models.Answer.objects.filter(player=obj).count()
     answers_count.short_description = 'Answers'
-
-    def correct_control_answers(self, obj):
-        return models.Answer.objects.filter(player=obj, question__is_control=True, winner__competitor__winner=True).count()
-    correct_control_answers.short_description = 'Correct control answers'
 
 
 admin.site.register(models.Competitor, CompetitorAdmin)

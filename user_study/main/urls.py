@@ -10,6 +10,6 @@ urlpatterns = [
     path("import_images", views.import_images, name="import_images"),
     path("generate_questions", views.generate_questions, name="generate_questions"),
     path("dump_answers", views.dump_answers, name="dump_answers"),
-    path("update_accuracy", views.update_accuracy, name="update_accuracy"),
+    path("update_players", views.update_players, name="update_players"),
     path("stats", views.stats, name="stats"),
 ]
