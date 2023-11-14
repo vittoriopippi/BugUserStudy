@@ -16,7 +16,8 @@ def invert_answers(modeladmin, request, queryset):
         for answer in answers:
             answer.winner = answer.question.sample_a if answer.winner == answer.question.sample_b else answer.question.sample_b
             answer.save()
-        player.accuracy = player._accuracy()
+        player.update_accuracy()
+        player.update_correct_control_answers()
         player.save()
 
 @admin.action(description="Set finished to True")
