@@ -23,13 +23,13 @@ def login(request):
         return redirect('index')
 
     times = []
-    for player in Player.objects.all():
+    for player in Player.objects.all().filter(visible=True):
         time_elps = player.time_delta()
-        if time_elps is not None:
+        if time_elps is not None and player.finished():
             times.append(time_elps.total_seconds())
     avg_time = sorted(times)[len(times) // 2] if len(times) > 0 else 'N/A'
     if avg_time != 'N/A':
-        avg_time = str(timedelta(seconds=avg_time)).split('.')[0]
+        avg_time = str(timedelta(seconds=avg_time)).split('.')[0][2:]
     return render(request, 'main/login.html', {'avg_time': avg_time})
 
 def index(request):
