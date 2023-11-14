@@ -9,6 +9,16 @@ def enable_competitors(modeladmin, request, queryset):
 def disable_competitors(modeladmin, request, queryset):
     queryset.update(available=False)
 
+@admin.action(description="Invert answers")
+def invert_answers(modeladmin, request, queryset):
+    for player in queryset:
+        answers = models.Answer.objects.filter(player=player)
+        for answer in answers:
+            answer.winner = answer.question.sample_a if answer.winner == answer.question.sample_b else answer.question.sample_b
+            answer.save()
+        player.accuracy = player._accuracy()
+        player.save()
+
 class CompetitorAdmin(admin.ModelAdmin):
     list_display = ('name', 'winner', 'available', 'images_count', 'questions_count', 'images_sizes')
     list_filter = ('winner', 'available')
@@ -44,6 +54,7 @@ class AnswerAdmin(admin.ModelAdmin):
 class PlayerAdmin(admin.ModelAdmin):
     list_display = ('username', 'accuracy', 'answers_count', 'correct_control_answers', 'time_delta', 'created_at', 'finished', 'visible', 'max_score')
     list_filter = ('visible', 'accuracy')
+    actions = [invert_answers]
 
     def answers_count(self, obj):
         return models.Answer.objects.filter(player=obj).count()
