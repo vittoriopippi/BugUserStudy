@@ -53,7 +53,7 @@ class AnswerAdmin(admin.ModelAdmin):
 
 class PlayerAdmin(admin.ModelAdmin):
     list_display = ('username', 'accuracy', 'answers_count', 'correct_control_answers', 'time_delta', 'created_at', 'finished', 'visible', 'max_score')
-    list_filter = ('visible', 'accuracy')
+    list_filter = ('visible', 'accuracy', 'finished', 'created_at')
     actions = [invert_answers]
 
     def answers_count(self, obj):
