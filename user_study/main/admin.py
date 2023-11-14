@@ -19,6 +19,17 @@ def invert_answers(modeladmin, request, queryset):
         player.accuracy = player._accuracy()
         player.save()
 
+@admin.action(description="Set finished to True")
+def set_finished(modeladmin, request, queryset):
+    queryset.update(finished=True)
+
+@admin.action(description="Set finished to False")
+def set_not_finished(modeladmin, request, queryset):
+    queryset.update(finished=False)
+
+
+
+
 class CompetitorAdmin(admin.ModelAdmin):
     list_display = ('name', 'winner', 'available', 'images_count', 'questions_count', 'images_sizes')
     list_filter = ('winner', 'available')
@@ -54,7 +65,7 @@ class AnswerAdmin(admin.ModelAdmin):
 class PlayerAdmin(admin.ModelAdmin):
     list_display = ('username', 'accuracy', 'answers_count', 'correct_control_answers', 'time_delta', 'created_at', 'finished', 'visible', 'max_score')
     list_filter = ('visible', 'accuracy', 'finished', 'created_at')
-    actions = [invert_answers]
+    actions = [invert_answers, set_finished, set_not_finished]
 
     def answers_count(self, obj):
         return models.Answer.objects.filter(player=obj).count()
