@@ -11,4 +11,5 @@ urlpatterns = [
     path("generate_questions", views.generate_questions, name="generate_questions"),
     path("dump_answers", views.dump_answers, name="dump_answers"),
     path("update_accuracy", views.update_accuracy, name="update_accuracy"),
+    path("stats", views.stats, name="stats"),
 ]

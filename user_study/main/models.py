@@ -18,6 +18,18 @@ class Prompt(models.Model):
     eng_text = models.CharField(max_length=128, unique=True)
     ita_text = models.CharField(max_length=128, blank=True)
 
+    def answer_count_by_competitor(self):
+        competitors = Competitor.objects.all()
+        counts = {}
+        for competitor in competitors:
+            answer_count = Answer.objects.filter(
+                question__sample_a__prompt=self,
+                question__sample_b__prompt=self,
+                winner__competitor=competitor,
+            ).count()
+            counts[competitor.name] = answer_count
+        return counts
+
     def __str__(self):
         return self.eng_text
     

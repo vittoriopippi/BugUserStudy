@@ -157,3 +157,22 @@ def update_accuracy(request):
         player.accuracy = player._accuracy()
         player.save()
     return redirect('scoreboard')
+
+def stats(request):
+    prompts = Prompt.objects.all()
+    prompt_dicts = [prompt.answer_count_by_competitor() for prompt in prompts]
+    prompt_values = [list(prompt_value.values()) for prompt_value in prompt_dicts]
+    prompt_competitors = [list(prompt_value.keys()) for prompt_value in prompt_dicts]
+    prompt_total = [sum(prompt_value.values()) for prompt_value in prompt_dicts]
+    prompt_values_perc = [[round(value / total * 100, 2) for value in prompt_value] for prompt_value, total in zip(prompt_values, prompt_total)]
+
+    total_values = [sum(prompt_value) for prompt_value in zip(*prompt_values)]
+    total_values_perc = [sum(prompt_value) / len(prompt_values_perc) for prompt_value in zip(*prompt_values_perc)]
+    total_competitors = prompt_competitors[0]
+
+    prompts_data = list(zip(list(prompts), [list(zip(*a))for a in list(zip(prompt_values, prompt_values_perc, prompt_competitors))]))
+    context = {
+        'prompts_data': prompts_data,
+        'total_data': list(zip(total_values, total_values_perc, total_competitors)),
+        }
+    return render(request, 'main/stats.html', context)
