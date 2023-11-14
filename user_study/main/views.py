@@ -40,6 +40,11 @@ def index(request):
     player = Player.objects.get(pk=player_id)
     answered_questions = Answer.objects.all().filter(player=player, question__is_control=False).count() 
     if answered_questions >= settings.QUESTIONS_PER_PLAYER:
+        player.finished = True
+        player.save()
+        return redirect('login')
+    
+    if player.finished:
         return redirect('login')
 
     control_questions = Question.objects.all().filter(is_control=True).order_by('pk')
@@ -87,6 +92,9 @@ def post_answer(request):
 
         answered_questions = Answer.objects.all().filter(player=player, question__is_control=False).count() 
         remaining_questions = settings.QUESTIONS_PER_PLAYER - answered_questions
+        if remaining_questions == 0:
+            player.finished = True
+            player.save()
         return JsonResponse({'status': 'OK', 'remaining_questions': remaining_questions})
     return HttpResponse('ERROR')
 

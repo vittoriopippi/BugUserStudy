@@ -60,6 +60,7 @@ class Player(models.Model):
     accuracy = models.IntegerField(default=0)
     visible = models.BooleanField(default=True)
     created_at = models.DateTimeField(auto_now_add=True, null=True)
+    finished = models.BooleanField(default=False)
 
     def _accuracy(self):
         answers_count = Answer.objects.filter(player=self).filter(winner__competitor__winner=True, question__is_control=False).count()
@@ -75,10 +76,7 @@ class Player(models.Model):
         return answers.last().date - answers.first().date
     
     def in_progress(self):
-        return Answer.objects.all().filter(player=self, question__is_control=False).count() < settings.QUESTIONS_PER_PLAYER
-    
-    def finished(self):
-        return not self.in_progress()
+        return not self.finished
     
     def max_score(self):
         answers = Answer.objects.all().filter(player=self, question__is_control=False)
