@@ -11,6 +11,7 @@ from pathlib import Path
 import random
 from datetime import timedelta, datetime
 from django.conf import settings
+import pandas as pd
 
 
 def login(request):
@@ -142,21 +143,9 @@ def dump_answers(request):
         headers={"Content-Disposition": f'attachment; filename="dump_{now_str}.csv"'},
     )
 
-    writer = csv.writer(response)
-    writer.writerow(["player", "is_control", "competitor_a", "competitor_b", "prompt", "winner"])
-    for answer in Answer.objects.all():
-        if not answer.player.visible:
-            continue
-        writer.writerow([
-            answer.player.name,
-            answer.question.is_control,
-            # answer.question.sample_a.img.url,
-            # answer.question.sample_b.img.url,
-            answer.question.sample_a.competitor.name,
-            answer.question.sample_b.competitor.name,
-            answer.question.sample_a.prompt.eng_text,
-            answer.winner.competitor.name
-        ])
+    data = Answer.objects.all().values('player__name', 'question__is_control', 'question__sample_a__competitor__name', 'question__sample_b__competitor__name', 'question__sample_a__prompt__eng_text', 'winner__competitor__name')
+    df = pd.DataFrame(data)
+    df.to_csv(path_or_buf=response)
     return response
 
 @staff_member_required
