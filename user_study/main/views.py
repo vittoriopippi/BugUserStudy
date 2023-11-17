@@ -143,7 +143,9 @@ def dump_answers(request):
         headers={"Content-Disposition": f'attachment; filename="dump_{now_str}.csv"'},
     )
 
-    data = Answer.objects.all().values('player__name', 'question__is_control', 'question__sample_a__competitor__name', 'question__sample_b__competitor__name', 'question__sample_a__prompt__eng_text', 'winner__competitor__name')
+    good_players = Player.objects.all().filter(correct_control_answers__gte=5)
+    answers = Answer.objects.all().filter(player__in=good_players)
+    data = answers.values('player__name', 'question__is_control', 'question__sample_a__competitor__name', 'question__sample_b__competitor__name', 'question__sample_a__prompt__eng_text', 'winner__competitor__name')
     df = pd.DataFrame(data)
     df.to_csv(path_or_buf=response)
     return response
